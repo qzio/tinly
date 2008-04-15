@@ -1,0 +1,15 @@
+see lib/COPYRIGHT for copyright license.
+
+$ cp example.config.php config.php
+-- edit config.php with your settings.
+$ cp example.routes.php routes.php
+-- edit default routes.
+$ ./script/generate controller mycontroller oneaction twoaction infiniteaction
+$ ./script generate model blog_post
+
+-- edit app/model/blog_post.php and set $tbl to plural, add columns to $fields.
+
+$ ./script/db install blog_post
+
+$ ./script/db empty all
+

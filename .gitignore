@@ -6,4 +6,5 @@ app/controller/*
 app/views/*
 app/models/*
 logs/*
+public/stylesheets/*
 

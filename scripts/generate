@@ -5,7 +5,7 @@ i=0;
 arr_counter=0;
 METHODS=[]
 for m in $*; do
-	if [ "$i" -gt 0 ]; then
+	if [ "$i" -gt 1 ]; then
 		METHODS[$arr_counter]=$m
 		arr_counter=`expr $arr_counter + 1`
 	fi
@@ -18,7 +18,7 @@ function create_model()
 	echo "create models/$1.php"
 	cat >> "app/models/$1.php" <<content_wraper
 <?php
-class $1 extends Base_Model {
+class $1 extends Tinly_Model {
 	public \$tbl = '$1';
 	public \$fields = array(
 		'id' => array(
@@ -42,38 +42,42 @@ function create_controller()
 	mkdir "app/views/$1"
 	touch "app/views/$1/index.tpl.php"
 	echo "creating views/$1"
-	echo "createing app/views/$1/index.tpl.php"
-	cat > "app/views/$1/index.tpl.php"<<content_wraper
-	<h1><?= \$page_title?></h1>
-content_wraper
 
 
-	echo "creating app/controllers/$1.php"
+	echo "creating app/controllers/$1_controller.php"
 	cat > "app/controllers/$1_controller.php"<<content_wraper
 <?php
-class $1_Controller extends Base_Controller
+class $1_Controller extends Tinly_Controller
 {
-	public function _index()
+	// index() {{{
+	public function index_()
 	{
 		\$this->tpl->assign(array(
 			'page_title' => 'the index page',
 			'_action' => 'index',
 		));
-	}
+	}// }}}
 content_wraper
 
+	echo "createing app/views/$1/index.tpl.php"
+	cat > "app/views/$1/index.tpl.php"<<content_wraper
+	<h1><?= \$page_title?></h1>
+content_wraper
 
 		for m in ${METHODS[*]}; do
+			action="$m"_
+			echo "createing app/views/$1/$m.tpl.php"
 			touch "app/views/$1/$m.tpl.php"
 			cat >> "app/controllers/$1_controller.php"<<content_wraper
-	public function _$m()
+	// $m() {{{
+	public function $action()
 	{
 		\$this->tpl->assign(array(
 			'page_title' => 'the $m page',
 			'_action' => '$m',
 		));
 
-	}
+	} // }}}
 content_wraper
 		done;
 

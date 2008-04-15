@@ -9,7 +9,7 @@ require_once BASE_PATH.'app/config.php';
 $filename	= $argv[0];
 $action		= $argv[1];
 $model		= ucwords($argv[2]);
-if ($action == 'empty' && $model == 'All') {
+if ($action == 'empty' && $model == 'all') {
 	require_once 'db/empty-it.php';
 	die( "all done\n" );
 }
