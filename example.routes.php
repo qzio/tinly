@@ -14,7 +14,7 @@
 // +--------------------------------------------------------+
 //
 // }}} 
-class Routes extends Base_routes
+class Routes extends Tinly_routes
 {
 	// properties {{{
 	public $default_controller = 'blogs';

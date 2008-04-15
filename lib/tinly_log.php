@@ -14,7 +14,7 @@
 // +--------------------------------------------------------+
 //
 //  }}}
-class TinyLog
+class Tinly_Log
 {
 	// properties {{{
 	protected $log_file;

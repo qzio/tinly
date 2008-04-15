@@ -35,8 +35,8 @@ function __autoload($class)
 // get class suffix
 function class_suffix($classname)
 {
-   //base controller is just a parent...
-   if ($classname == 'base_controller') return false;
+   //tinly controller is just a parent...
+   if ($classname == 'tinly_controller') return false;
    $pos = strrpos($classname,'_');
    if ($pos === false) return false;
    $class_suffix = strtolower(substr($classname,$pos+1));

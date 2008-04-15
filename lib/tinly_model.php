@@ -4,7 +4,7 @@
 // +--------------------------------------------------------+   
 // | PHP Version 5.x                                        |
 // +--------------------------------------------------------+
-// | Filename: base_model.inc                               |
+// | Filename: lib/tinly_model.php                          |
 // +--------------------------------------------------------+
 // | Copyright (c) 2008 Joel Hansson                        |
 // +--------------------------------------------------------+
@@ -15,7 +15,7 @@
 //
 //  }}}
 //
-class Base_Model {
+class Tinly_Model {
    // properties {{{
    public $quote_types = array('varchar', 'datetime','tinytext','text','longtext','tinyblob','blob','longblob');
    public $tbl = 'base_model_table';

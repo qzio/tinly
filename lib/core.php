@@ -10,7 +10,7 @@
 // +--------------------------------------------------------+
 // | License: MIT                                           |
 // +--------------------------------------------------------+
-// | Author:   Joel Hansson <joel@gottfolk.se>              |
+// | Author:   Joel Hansson <joel.hansson@gmail.com>        |
 // +--------------------------------------------------------+
 //
 //  }}}
@@ -80,7 +80,6 @@ class Core {
       $route = new Routes($this->uriSegment('whole'));
       $controller_class = $route->getController().'_controller';
       $action = $route->getAction();
-
       if (class_exists($controller_class) && !empty($action)) {
          $controller = new $controller_class;
          $controller->setParams($route->getParams());
@@ -101,6 +100,7 @@ class Core {
       //header('location: /?q='.$controller.'/'.$action);
       header('location: /'.$controller.'/'.$action.'/'.$id);
    } // }}}
+   // load($params = array()) {{{
    public static function load($params = array())
    {
       if (is_string($params)) {
@@ -122,7 +122,7 @@ class Core {
 
       return false;
 
-   }
+   } // }}}
    // __desctruct() {{{
    public function __destruct()
    {

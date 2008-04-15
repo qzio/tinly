@@ -1,5 +1,5 @@
 <?php
-class Base_routes
+class Tinly_routes
 {
 	// properties {{{
 	protected $u = array();

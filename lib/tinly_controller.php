@@ -4,7 +4,7 @@
 // +--------------------------------------------------------+   
 // | PHP Version 5.x                                        |
 // +--------------------------------------------------------+
-// | Filename: base_controller.inc                          |
+// | Filename: tinly_controller.inc                         |
 // +--------------------------------------------------------+
 // | Copyright (c) 2008 Joel Hansson                        |
 // +--------------------------------------------------------+
@@ -14,7 +14,7 @@
 // +--------------------------------------------------------+
 //
 // }}}
-class Base_Controller {
+class Tinly_Controller {
    // properties {{{
    protected $_get = array(); 
    protected $_post = array();
