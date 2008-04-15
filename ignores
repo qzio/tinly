@@ -1,0 +1,8 @@
+routes.php
+config.php
+.htaccess
+.htpasswd
+lighttpd.conf
+.lighttpd.conf
+tags
+ignores

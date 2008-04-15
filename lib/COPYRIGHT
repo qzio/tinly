@@ -1,0 +1,13 @@
+author: joel hansson
+MIT license.
+see http://www.opensource.org/licenses/mit-license.php
+following files is copyrighted with this license.
+
+/lib/*
+/scripts/*
+/example.config.php
+/example.routes.php
+/.lighttpd.conf
+/.htaccess
+plugins/html_plugin.php
+plugins/form_plugin.php

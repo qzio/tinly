@@ -1,0 +1,94 @@
+#!/usr/bin/php
+<?php
+if (!isset($argv[0])) die( 'what you say?' );
+
+define('BASE_PATH',substr(dirname(__FILE__),0,-8).'/');
+
+require_once BASE_PATH.'lib/__autoload.php';
+require_once BASE_PATH.'app/config.php';
+$filename	= $argv[0];
+$action		= $argv[1];
+$model		= ucwords($argv[2]);
+if ($action == 'empty' && $model == 'All') {
+	require_once 'db/empty-it.php';
+	die( "all done\n" );
+}
+$Core = Core::singleton();
+$Core->setInitialVars();
+
+if ($action == 'install') {
+	$m = new $model();
+	echo 'installing '.$model."\n";
+	if (!$m->pdo->pexistTable($m->tbl)) {
+
+      $sql = 'create table '.$m->tbl.' (';
+      foreach($m->fields as $f => $attr) {
+			if ($attr['type'] == 'custom') continue;
+         $attr['extra'] = isset($attr['extra']) ? $attr['extra'] : '';
+         $attr['null'] = isset($attr['null']) ? $attr['null'] : true;
+         $attr['primary_key'] = isset($attr['primary_key']) ? true : false;
+
+         // add a type parameter, i.e the (200) in 'varchar(200)'
+         $type_p = isset($attr['type_p']) ? '('.$attr['type_p'].')' : '';
+
+         $sql .= $f.' '.$attr['type'].$type_p.' ';
+
+         if ($attr['null'] === false) $sql .= 'not null ';
+         if (isset($attr['default'])) $sql .= 'default '.$attr['default'];
+         $sql .= $attr['extra'].' ';
+         if ($attr['primary_key']) $sql .= 'primary key';
+         $sql .= ', ';
+      }
+      $sql = rtrim(rtrim($sql),',').') DEFAULT CHARSET=UTF8';
+      $m->pdo->pexec($sql);
+	} else {
+      $sql = 'alter '.$m->tbl.' (';
+
+      $r = $m->pdo->pfetchAll('describe '.$m->tbl);
+      foreach($r as $f) {
+         $f_exists[] = $f['Field'];
+      }
+
+      $new_f = array();
+      foreach($m->fields as $f => $attr) {
+         if (!in_array($f,$f_exists) && $attr['type'] != 'custom') {
+            echo $f.' doesnt exists..<br/>';
+            $new_f[$f] = $attr;
+         }
+      }
+
+      // update the table with new fields
+      if (!empty($new_f)) {
+         $sql_start = 'alter table '.$m->tbl.' add column ';
+         foreach($new_f as $field => $attr) {
+				if ($attr['type'] == 'custom') continue;
+            $attr['extra'] = isset($attr['extra']) ? $attr['extra'] : '';
+            $attr['null'] = isset($attr['null']) ? $attr['null'] : true;
+            $attr['primary_key'] = isset($attr['primary_key']) ? true : false;
+
+            // add a type parameter, i.e the (200) in 'varchar(200)'
+            $type_p = isset($attr['type_p']) ? '('.$attr['type_p'].')' : '';
+
+            $perform = $field.' '.$attr['type'].$type_p.' ';
+
+            if ($attr['null'] === false) $perform .= 'not null ';
+            if (isset($attr['default'])) $perform .= 'default '.$attr['default'];
+            $perform .= $attr['extra'].' ';
+
+            $add_fields_sql[] = 'alter table '.$m->tbl.' add column '.$perform;
+         }
+      }
+
+      if (!empty($add_fields_sql)) {
+         foreach($add_fields_sql as $sql) {
+            echo "exec ($sql)<br/>\n";
+            $m->pdo->pexec($sql);
+         }
+         die("all done, dying\n");
+      }
+      die("no new fields... dying\n");
+
+	}
+}
+echo "done\n";
+?>

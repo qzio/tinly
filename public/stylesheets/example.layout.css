@@ -1,0 +1,49 @@
+body {
+	margin:0 auto;
+	width:760px;
+}
+h2 {
+	margin-bottom:1em;
+}
+
+#navigation {
+	float:left;
+}
+	#navigation li, #navigation a {
+		float:left;
+	}
+	#navigation a { 
+		padding:.5em 1em;
+	}
+
+#content {
+	clear:both;
+	border-top:2px solid #ccc;
+	padding:1em;
+	padding-top:2em;
+}
+
+.blogpost,
+.comment {
+	border-bottom:1px solid #ccc;
+	padding:1em;
+}
+	.blogpost div,
+	.comment div {
+		padding:1em;
+	}
+
+/**
+ * form stuff
+ **/
+label, input, textarea {
+	display:block;
+}
+
+input {
+	width:15em;
+}
+textarea {
+	width:80%;
+	height:100px;
+}

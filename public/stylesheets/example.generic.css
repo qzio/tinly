@@ -1,0 +1,12 @@
+.clear {
+	clear:both;
+}
+.dark {
+	background:#ebebe9;
+}
+.light {
+	background:#f4f4f4;
+}
+.nowrap {
+	white-space:nowrap;
+}
