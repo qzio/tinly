@@ -73,7 +73,7 @@ class Base_Controller {
    //__call {{{
    public function __call($action,$args = array()) 
    {
-      $method = '_'.$action;
+      $method = $action.'_';
       if (method_exists($this,$method)) {
          $this->$method();
          if (!$this->tpl->isDisplayed()) {
