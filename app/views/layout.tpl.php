@@ -5,12 +5,9 @@
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 
 		<title>Demo blog | <?= empty($page_title) ? '' : $page_title?></title>
-		<style type="text/css">
-			@import '/public/stylesheets/main.css?<?=rand(100,200)?>';
-		</style>
-
-		<?=$html->script('jquery/jquery-1.2.3.js')?>
-		<?=$html->script('init.js?'.rand(100,200))?>
+		<?=$html->load_style('main.css')?>
+		<?=$html->load_script('jquery/jquery-1.2.3.js')?>
+		<?=$html->load_script('init.js?'.rand(100,200))?>
 
 	</head>
 	<body>

@@ -28,7 +28,7 @@ class pdo_wrap extends PDO {
     * Keeps track of query amount
     * @var num
     */
-   public      $query_count = 0;
+   public static  $qc = 0;
 
    /**
     * An array with all present tablesa
@@ -87,7 +87,7 @@ class pdo_wrap extends PDO {
          $result = false;
          $this->pcatch($e);
       }
-      $this->query_count++;
+      self::$qc++;
       return $result;
    }
 
@@ -115,7 +115,7 @@ class pdo_wrap extends PDO {
          $result = false;
          $this->pcatch($e);
       }
-      $this->query_count++;
+      self::$qc++;
       $stmt = null;
       return is_array($result) ? $result : array();
    }
@@ -139,7 +139,7 @@ class pdo_wrap extends PDO {
          $result = false;
          $this->pcatch($e);
       }
-      $this->query_count++;
+      self::$qc++;
       $stmt = null;
       return $result;
    }
@@ -183,9 +183,9 @@ class pdo_wrap extends PDO {
 
    // }}}
    // getCounter {{{
-   public function getCounter()
+   public static function getCounter()
    {
-      return $this->query_count;
+      return self::$qc;
    }
 
    // }}}
@@ -211,7 +211,7 @@ class pdo_wrap extends PDO {
          $result = false;
          $this->pcatch($e);
       }
-      $this->query_count++;
+      self::$qc++;
       return $result;
    }
    // }}}
@@ -229,7 +229,7 @@ class pdo_wrap extends PDO {
       } catch(PDOException $e) {
          $this->pcatch($e);
       }
-      $this->cq++;
+      self::$qc++;
       return $result;
    }
 

@@ -102,7 +102,9 @@ class core {
    public static function load($params = array())
    {
       if (is_string($params)) {
-         require_once $params;
+         if (is_file($params)) {
+            require_once $params;
+         }
          return false;
       }
 
@@ -124,8 +126,9 @@ class core {
    // __desctruct() {{{
    public function __destruct()
    {
-      if (CONFIG::$TEMPLATE_DIR == 'app/views/') {
-         echo '<!-- generation time: '.sprintf('%0.4f',(microtime(true)-self::$start_time)).'s -->'."\n";
+      if ( !empty(Config::$DEBUG_BOX) && Config::$DEBUG_BOX === true) 
+      {
+         $this->load('vendors/joel/debug_box.tpl.php');
       }
    }// }}}
 }

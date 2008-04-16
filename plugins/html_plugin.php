@@ -64,9 +64,15 @@ class Html_Plugin {
 	}
 	// }}}
    // script {{{
-   public function script($script)
+   public function load_script($script)
    {
-      return '<script type="text/javascript" src="/public/javascripts/'.$script.'"></script>'."\n";
+      return '<script type="text/javascript" src="/'.Config::$TEMPLATE_DIR.'_public/javascripts/'.$script.'"></script>'."\n";
+   }
+   // }}}
+   // style {{{
+   public function load_style($style)
+   {
+      return '<style type="text/css"> @import \'/'.Config::$TEMPLATE_DIR.'_public/stylesheets/'.$style.'\';</style>'."\n";
    }
    // }}}
    // p {{{
