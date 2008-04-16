@@ -10,11 +10,11 @@
 // +--------------------------------------------------------+
 // | License: MIT                                           |
 // +--------------------------------------------------------+
-// | Author:   Joel Hansson <joel@gottfolk.se>              |
+// | Author:   Joel Hansson <joel.hansson@gmail.com>              |
 // +--------------------------------------------------------+
 //
 // }}}
-class Tinly_Controller {
+class tinly_controller {
    // properties {{{
    protected $_get = array(); 
    protected $_post = array();
@@ -97,18 +97,26 @@ class Tinly_Controller {
       }
    }
    // }}}
-   // redirect($controller,$action = 'index',$p = array()) {{{
-   public function redirect($controller,$action = 'index',$p = array())
+   // redirect($uri,$msg) {{{
+   public function redirect($uri,$msg = '') 
    {
-      //header('location: /?q='.$controller.'/'.$action);
-      if (isset($p['msg'])) $_SESSION['message'] = $p['msg'];
-      header('location: /'.$controller.'/'.$action);
-      die();
+      $_SESSION['message'] = $msg;
+      header('Location: '.$uri);
    } // }}}
    // setRequest($req) {{{
    public function setRequest($req)
    {
       $this->request = $req;
+   }
+   // }}}
+   // parseQuery($uri_segment) {{{
+   public function parseQuery($uri_segment)
+   {
+      $r = array();
+      if (!empty($uri_segment[2])) {
+         $r = array('id' => $uri_segment[2]);
+      }
+      return $r;
    }
    // }}}
 }

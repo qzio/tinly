@@ -10,11 +10,11 @@
 // +--------------------------------------------------------+
 // | License: MIT                                           |
 // +--------------------------------------------------------+
-// | Author:   Joel Hansson <joel@gottfolk.se>              |
+// | Author:   Joel Hansson <joel.hansson@gmail.com>              |
 // +--------------------------------------------------------+
 //
 //  }}}
-class TcURL {
+class tcurl {
 	// properties {{{
 	// base url to the server running bo, i.e http://tycoon.metaboli.net:3003
 	protected $base_url;

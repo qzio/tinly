@@ -9,13 +9,13 @@
 // +--------------------------------------------------------+
 // | License: MIT                                           |
 // +--------------------------------------------------------+
-// | Author:   Joel Hansson <joel@gottfolk.se>              |
+// | Author:   Joel Hansson <joel.hansson@gmail.com>              |
 // +--------------------------------------------------------+
 //
 // 
 //
 
-class Validate {
+class validate {
    // Properties {{{
    /**
     * Associative array with error messages

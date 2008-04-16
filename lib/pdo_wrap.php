@@ -10,13 +10,13 @@
 // +--------------------------------------------------------+
 // | License: MIT                                           |
 // +--------------------------------------------------------+
-// | Author:   Joel Hansson <joel@gottfolk.se>              |
+// | Author:   Joel Hansson <joel.hansson@gmail.com>              |
 // +--------------------------------------------------------+
 //
 //  }}}
 
 
-class PDO_Wrap extends PDO {
+class pdo_wrap extends PDO {
    // Properties {{{
    /**
     * Database connect resource #id
@@ -60,8 +60,8 @@ class PDO_Wrap extends PDO {
    }
 
    // }}}
-   // singleton() {{{
-   public static function singleton($dsn,$user,$passwd)
+   // getInstance() {{{
+   public static function getInstance($dsn = '',$user= '',$passwd='')
    {
       if (!isset(self::$instance)) {
          $c = __CLASS__;
@@ -218,6 +218,7 @@ class PDO_Wrap extends PDO {
    // sfetchAll($sql,$params = array()) {{{
    public function sfetchAll($sql,$params = array())
    {
+      $result = false;
       $params = (!empty($params)) ? $params : array();
       try {
          $stmt = $this->prepare($sql);
@@ -226,10 +227,9 @@ class PDO_Wrap extends PDO {
          $stmt->closeCursor();
 
       } catch(PDOException $e) {
-         $result = false;
          $this->pcatch($e);
       }
-      $this->query_count++;
+      $this->cq++;
       return $result;
    }
 

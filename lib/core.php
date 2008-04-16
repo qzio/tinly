@@ -15,7 +15,7 @@
 //
 //  }}}
 
-class Core {
+class core {
    static $instance;
    static $start_time;
    static $base_path; 
@@ -24,16 +24,12 @@ class Core {
    private function __construct()
    {
    }// }}}
-   // singleton() {{{
-   static function singleton()
+   // getInstance() {{{
+   static function getInstance()
    {
       if (!isset(self::$instance)) {
          $c = __CLASS__;
          self::$instance = new $c();
-         /*
-         self::$instance->setInitialVars();
-         self::$instance->initiateController();
-          */
       }
       return self::$instance;
    } // }}}
@@ -55,6 +51,8 @@ class Core {
       setlocale(LC_ALL,Config::$LOCAL);
 
       $this->load('lib/errorhandler.php');
+      $this->load('lib/generic_functions.php');
+      //$this->load('lib/tinly_sessions.php');
 
       if (function_exists('date_default_timezone_set')) {
          date_default_timezone_set(Config::$TIMEZONE);
@@ -82,7 +80,7 @@ class Core {
       $action = $route->getAction();
       if (class_exists($controller_class) && !empty($action)) {
          $controller = new $controller_class;
-         $controller->setParams($route->getParams());
+         $controller->setParams($route->getParams($controller));
          $controller->setRequest($route->getRequest());
          $controller->$action();
       } else {

@@ -1,5 +1,5 @@
 <?php
-class Tinly_routes
+class tinly_routes
 {
 	// properties {{{
 	protected $u = array();
@@ -23,18 +23,15 @@ class Tinly_routes
 	{
 		return (!empty($this->u[1])) ? $this->u[1] : $this->default_action;
 	} // }}}
-	// getParams() {{{
-	public function getParams()
+	// getParams($controller = '') {{{
+	public function getParams($controller = '')
 	{
 		// if post is not empty, return it
 		if (!empty($_POST)) return $_POST;
 
-		// else return get without the q
-		$g = $_GET;
-		$g['q'] = null;
-		unset($g['q']);
-		if (empty($g['id']) && !empty($this->u[2])) {
-		  	$g['id'] = $this->u[2];
+		$g = array();
+		if (is_object($controller)) {
+			$g = $controller->parseQuery($this->u);
 		}
 		return $g;
 	} // }}}

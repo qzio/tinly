@@ -15,11 +15,12 @@ done;
 
 function create_model()
 {
-	echo "create models/$1.php"
-	cat >> "app/models/$1.php" <<content_wraper
+	echo "create app/models/$1.php"
+	cat > "app/models/$1.php" <<content_wraper
 <?php
-class $1 extends Tinly_Model {
+class $1 extends tinly_model {
 	public \$tbl = '$1';
+	public static \$instance;
 	public \$fields = array(
 		'id' => array(
 			'type' => 'int',
@@ -28,6 +29,9 @@ class $1 extends Tinly_Model {
 			'primary_key' => 'true'
 		),
 	);
+   // i() make model accessible, usage ex: $i::i()->fetchAll() {{{
+   public static function i() { if (!isset(self::\$instance)) { \$c = __CLASS__; self::\$instance = new \$c(); } return self::\$instance; } 
+	// }}}
 }
 ?>
 content_wraper
@@ -47,7 +51,7 @@ function create_controller()
 	echo "creating app/controllers/$1_controller.php"
 	cat > "app/controllers/$1_controller.php"<<content_wraper
 <?php
-class $1_Controller extends Tinly_Controller
+class $1_controller extends tinly_controller
 {
 	// index() {{{
 	public function index_()

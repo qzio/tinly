@@ -5,15 +5,15 @@ if (!isset($argv[0])) die( 'what you say?' );
 define('BASE_PATH',substr(dirname(__FILE__),0,-8).'/');
 
 require_once BASE_PATH.'lib/__autoload.php';
-require_once BASE_PATH.'app/config.php';
+require_once BASE_PATH.'config.php';
 $filename	= $argv[0];
 $action		= $argv[1];
 $model		= ucwords($argv[2]);
-if ($action == 'empty' && $model == 'all') {
+if ($action == 'empty' && $model == 'All') {
 	require_once 'db/empty-it.php';
 	die( "all done\n" );
 }
-$Core = Core::singleton();
+$Core = Core::getInstance();
 $Core->setInitialVars();
 
 if ($action == 'install') {

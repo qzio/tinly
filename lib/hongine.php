@@ -10,11 +10,11 @@
 // +--------------------------------------------------------+
 // | License: MIT                                           |
 // +--------------------------------------------------------+
-// | Author:   Joel Hansson <joel@gottfolk.se>              |
+// | Author:   Joel Hansson <joel.hansson@gmail.com>              |
 // +--------------------------------------------------------+
 //
 // }}}
-class Hongine {
+class hongine {
    protected $displayed;
    protected $tplDir;
    protected $template;

@@ -10,11 +10,11 @@
 // +--------------------------------------------------------+
 // | License: MIT                                           |
 // +--------------------------------------------------------+
-// | Author:   Joel Hansson <joel@gottfolk.se>              |
+// | Author:   Joel Hansson <joel.hansson@gmail.com>              |
 // +--------------------------------------------------------+
 //
 //  }}}
-class Tinly_Log
+class tinly_log
 {
 	// properties {{{
 	protected $log_file;

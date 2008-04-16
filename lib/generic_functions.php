@@ -30,3 +30,9 @@ function xml2array($simplexml)
 	}
 	return $arr;
 }// }}}
+// a(mixed) alias for numeric array(1,2,3) {{{
+function a()
+{
+	return func_get_args();
+}
+// }}}

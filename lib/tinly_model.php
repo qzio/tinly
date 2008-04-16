@@ -10,30 +10,30 @@
 // +--------------------------------------------------------+
 // | License: MIT                                           |
 // +--------------------------------------------------------+
-// | Author:   Joel Hansson <joel@gottfolk.se>              |
+// | Author:   Joel Hansson <joel.hansson@gmail.com>              |
 // +--------------------------------------------------------+
 //
 //  }}}
 //
-class Tinly_Model {
+class tinly_model {
    // properties {{{
-   public $quote_types = array('varchar', 'datetime','tinytext','text','longtext','tinyblob','blob','longblob');
+   //public $quote_types = array('varchar', 'datetime','tinytext','text','longtext','tinyblob','blob','longblob');
    public $tbl = 'base_model_table';
    public $fields = array();
    public $pkey = 'id';
    public $posts_per_page = 20;
-   protected $attr = array();
-   protected $errors = array();
    public $files = array();
    public $pdo;
    private static $instance;
+   protected $attr = array();
+   protected $errors = array();
    // }}}
    
    //__construct {{{
    public function __construct($p = array())
    {
       if (!is_object($this->pdo)) {
-         $this->pdo = PDO_Wrap::singleton(Config::$DB_DSN,Config::$DB_USER,Config::$DB_PASSWORD);
+         $this->pdo = PDO_Wrap::getInstance(Config::$DB_DSN,Config::$DB_USER,Config::$DB_PASSWORD);
          //$this->pdo = &$GLOBALS['pdo'];
       }
       if ( is_array($p) && (!empty($p) || !empty($p['files'])) ) {
@@ -41,8 +41,8 @@ class Tinly_Model {
       }
    }
    // }}}
-   // singleton() {{{
-   public static function singleton()
+   // getInstance() {{{
+   public static function getInstance()
    {
       if (!isset(self::$instance)) {
          $c = __CLASS__;
@@ -59,8 +59,8 @@ class Tinly_Model {
       return $this->errors;
    }
    // }}}
-   // getPost {{{
-   public function getPost()
+   // getAttr {{{
+   public function getAttr()
    {
       return $this->attr;
    }
@@ -75,11 +75,9 @@ class Tinly_Model {
    // }}}
    //setAttributes {{{
    public function setAttributes($p,$_f = array()) {
-      if (!is_object($this->pdo)) {
+      /*if (!is_object($this->pdo)) {
          $this->pdo = PDO_Wrap::singleton(Config::$DB_DSN,Config::$DB_USER,Config::$DB_PASSWORD);
-      }
-
-
+      }*/
       foreach($this->fields as $f => $a) {
          if (array_key_exists($f,$p)) {
             $p[$f] = ($a['type'] == 'int') ? intval($p[$f]) : $p[$f];
@@ -105,10 +103,12 @@ class Tinly_Model {
       if (!isset($this->attr[$var])) return false;
       $r = $this->attr[$var];
 
+      /*
       // some onquote stuff...
       if (in_array($this->fields[$var]['type'],$this->quote_types)) {
          $r = (substr($r,0,1) == "'" && substr($r,-1,1) == "'") ? substr($r,1,-1) : $r;
       }
+      */
       return $r;
    }
    // }}}
@@ -140,70 +140,48 @@ class Tinly_Model {
       // perform before_save functions.
       $this->before_save();
 
+      // containes a column set string and values
+
       // update post if primary key is set, or force_insert param is not set.
       if (isset($this->attr[$this->pkey]) && !isset($p['force_insert'])) {
-         $r = $this->update($this->attr);
+         $prepares = $this->prepareSet('update');
+         $r = $this->update($prepares);
 
       // else do insert
       } else {
-         $r = $this->insert($this->attr);
+         $prepares = $this->prepareSet();
+         $r = $this->insert($prepares);
       }
       return $r;
    } // }}}
    //remove($p)  {{{
-   public function remove($p = array())
+   public function remove($pvalue)
    {
-      if (is_string($p) || is_int($p)) {
-         $sql = 'delete from '.$this->tbl.' where '.
-            $this->pkey.' = '.$p;
-      } elseif (is_array($p) && !empty($p['where'])) {
-         $sql = 'delete from '.$this->tbl.' where '.$p['where'];
+      $r = false;
+      try {
+         $sql = 'delete from '.$this->tbl.' where '.$this->pkey.' = ?';
+         $stmt = $this->pdo->prepare($sql);
+         $r = $stmt->execute(array($pvalue));
+         $this->pdo->qc++;
+      } catch(PDOException $e) {
+         $this->pdo->pcatch($e);
       }
-
-      if (!empty($sql)) return $this->pdo->pexec($sql);
-      return true;
-   } // }}}
-   //fetchList($p = array()) {{{
-   public function fetchList($p = array())
-   {
-      if (isset($p['page'])) {
-         $limit_start = intval($p['page']) * $this->posts_per_page;
-         $p['limit'] = intval($limit_start).', '.$this->posts_per_page;
-      }
-      $fields = !empty($p['fields']) ? $p['fields'] : '*';
-      $sql = 'select '.$fields.' from '.$this->tbl;
-      if (!empty($p['where'])) {
-         $sql .= ' where '.$p['where'];
-      }
-      $sql .= (!empty($p['order_by'])) ? ' order by '.$p['order_by'] : '';
-      $sql .= (!empty($p['limit'])) ? ' limit '.$p['limit'] : '';
-      $r = $this->pdo->pfetchAll($sql,get_class($this));
       return $r;
-
    } // }}}
-   //fetchOne($p = array()) {{{
-   public function fetchOne($p = array())
+   //fetchList() {{{
+   public function fetchList($sql='',$params = array())
    {
-      $fields = (is_array($p) && isset($p['fields'])) ? $p['fields'] : '*';
-      if (is_string($p) || is_int($p)) {
-         $key_value = $p;
-      }
-      $sql = 'select '.$fields.' from '.$this->tbl;
-      if (is_array($p) && isset($p['where'])) {
-         $sql .= ' where '.$p['where'];
-      } elseif (isset($key_value)) {
-         $sql .= ' where '.$this->pkey.' = '.$key_value;
-      }
-      $sql .= ' limit 1';
-      if ($r = $this->pdo->pfetch($sql)) {
-         $this_class = get_class($this);
-         $obj = new $this_class($r);
-         return $obj;
-      } else {
-         return array();
-      }
+      $sql = !empty($sql) ? $sql : 'select * from '.$this->tbl;
+      return $this->pdo->sfetchAll($sql,$params);
    } // }}}
-   //countPosts($where '') {{{
+   //fetchOne($pvalue) {{{
+   public function fetchOne($pvalue)
+   {
+      $sql = 'select * from '.$this->tbl.' where '.$this->pkey.' = ? limit 1';
+      $result = $this->pdo->sfetchAll($sql,array($pvalue));
+      return $result[0];
+   } // }}}
+   //countPosts($where = '') {{{
    public function countPosts($where = '')
    {
       $where = !empty($where) ? 'where '.$where.' ' : '';
@@ -227,79 +205,71 @@ class Tinly_Model {
          }
       }
    } // }}}
-   // insert {{{
-   protected function insert()
+   // insert($prepares) {{{
+   protected function insert($prepares)
    {
+      $r = false;
       try {
          $sql = 'insert into `'.$this->tbl.'` set ';
-         $prepares = $this->prepareSet();
          $sql .= $prepares['column_str'];
          $values = $prepares['values'];
          $stmt = $this->pdo->prepare($sql);
-
-         // set values
-         foreach($values as $f => $v) {
-            $stmt->bindParam($f,$values[$f]);
-         }
-
          // execute query
-         $r = $stmt->execute();
-
-         $this->pdo->query_count++;
-         $this->attr[$this->pkey] = $this->pdo->lastInsertId();
-         return $r;
+         if ($r = $stmt->execute($values)) {
+            $this->attr[$this->pkey] = $this->pdo->lastInsertId();
+         }
+         $this->pdo->qc++;
 
       } catch(PDOException $e) {
          $this->pdo->pcatch($e);
       }
-      return false;
+      return $r;
    } // }}}
-   // update() {{{
-   protected function update()
+   // update($prepares) {{{
+   protected function update($prepares)
    {
+      $r = false;
       try {
          // prepare sql and values
-         $sql = 'update `'.$this->tbl.'` set ';
-
-         $prepares = $this->prepareSet('update');
-         $sql .= $prepares['column_str'];
-         $values = $prepares['values'];
+         $sql = 'update `'.$this->tbl.'` set '.$prepares['column_str'];
 
          // set where clause
          if (array_key_exists($this->pkey,$this->attr)) {
             $sql .= ' where `'.$this->pkey.'` = :'.$this->pkey;
-            $values[':'.$this->pkey] = $this->attr[$this->pkey];
+            $prepares['values'][':'.$this->pkey] = $this->attr[$this->pkey];
          } 
          $stmt = $this->pdo->prepare($sql);
-         foreach($values as $f => $v) {
-            $stmt->bindParam($f,$values[$f]);
+         foreach($prepares['values'] as $f => $v) {
+            $stmt->bindParam($f,$prepare['values'][$f]);
          }
          $r = $stmt->execute();
-         $this->pdo->query_count++;
-         return $r;
+         $this->pdo->qc++;
 
       } catch(PDOException $e) {
          $this->pdo->pcatch($e);
       }
-      return false;
+      return $r;
    } // }}}
    // prepareSet() {{{
-   protected function prepareSet($type = 'insert')
+   protected function prepareSet()
    {
       $returns = array('column_str' => '','values' => array());
 
       $column_str = '';
       $values = array();
+      // loop through the attributes
       foreach($this->attr as $f => $v) {
-         // dont insert custom fields into db.
-         if($this->fields[$f]['type'] == 'custom') continue;
+         
+         // dont insert primary key or custom fields into db
+         if ($f != $this->pkey && $this->fields[$f]['type'] != 'custom') {
 
-         if ($f != $this->pkey) {
             $column_str.= ', `'.$f.'` = ';
+            // treat curdate special
             if ($v == 'curdate()') {
                $column_str .= 'curdate()';
             } else {
                $column_str .=':'.$f;
+               // serialize arrays before inserting into database.
                $values[':'.$f] = (is_array($v)) ? serialize($v) : $v;
             }
          }
@@ -309,8 +279,6 @@ class Tinly_Model {
       $returns['column_str'] = ltrim(ltrim($column_str),',');
       $returns['values'] = $values;
       return $returns;
-   }
-
-   // }}}
+   } // }}}
 }
 ?>
