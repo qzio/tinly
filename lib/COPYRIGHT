@@ -4,10 +4,12 @@ see http://www.opensource.org/licenses/mit-license.php
 following files is copyrighted with this license.
 
 /lib/*
-/scripts/*
+plugins/html_plugin.php
+plugins/form_plugin.php
+/vendors/joel/*
+/scripts/db
+/scripts/generate
 /example.config.php
 /example.routes.php
 /.lighttpd.conf
 /.htaccess
-plugins/html_plugin.php
-plugins/form_plugin.php

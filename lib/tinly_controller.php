@@ -32,7 +32,7 @@ class tinly_controller {
    public function initiateBase()
    {
       $this->my_name = substr(get_class($this),0,-11);
-      $this->tpl = new Hongine($_SESSION,array('controller' => $this->my_name)); 
+      $this->tpl = new tinly_template($_SESSION,array('controller' => $this->my_name)); 
 
       // set _get,_post,_files as class variables.
       $this->_get = $_GET;

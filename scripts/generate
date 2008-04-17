@@ -1,25 +1,35 @@
-#!/bin/bash
-TYPE=$1
-NAME=$2
-i=0;
-arr_counter=0;
-METHODS=[]
-for m in $*; do
-	if [ "$i" -gt 1 ]; then
-		METHODS[$arr_counter]=$m
-		arr_counter=`expr $arr_counter + 1`
-	fi
-	i=`expr $i + 1`
-done;
-
-
-function create_model()
-{
-	echo "create app/models/$1.php"
-	cat > "app/models/$1.php" <<content_wraper
+#!/usr/bin/php
 <?php
-class $1 extends tinly_model {
-	public \$tbl = '$1';
+if (!isset($argv[0])) die( 'what you say?' );
+
+define('BASE_PATH',substr(dirname(__FILE__),0,-8).'/');
+
+require_once BASE_PATH.'lib/__autoload.php';
+require_once BASE_PATH.'config.php';
+$filename = $argv[0];
+$type	= $argv[1];
+$class = $argv[2];
+if (empty($class)) {
+	echo "usage: generate (model|controller) name_of [method method ..]\n";
+	die();
+}
+
+$methods = array();
+foreach(array_splice($argv,3) as $method) {
+	$methods[] = $method;
+}
+
+// create_model($model,$methods) {{{
+function create_model($model,$methods)
+{
+	$file = BASE_PATH.'app/models/'.$model.'.php';
+	echo "will create app/models/".$model.".php\n";
+	if (is_file($file)) return "file already exists, not overwriting\n";
+
+	$content = <<<EOF
+<?php
+class $model extends tinly_model {
+	public \$tbl = '$model';
 	public static \$instance;
 	public \$fields = array(
 		'id' => array(
@@ -32,74 +42,60 @@ class $1 extends tinly_model {
    // i() make model accessible, usage ex: $i::i()->fetchAll() {{{
    public static function i() { if (!isset(self::\$instance)) { \$c = __CLASS__; self::\$instance = new \$c(); } return self::\$instance; } 
 	// }}}
-}
-?>
-content_wraper
-
-}
-
-
-function create_controller()
+EOF;
+	foreach($methods as $m) {
+		$content .= '   // '.$m.'() {{{'."\n   public function ".$m."()\n   {\n\n   }// }}}\n";
+	}
+	$content .= "\n".'}?>';
+	file_put_contents($file,$content);
+	return "model ".$model." generated, please change \$tbl to plural. and do ".
+		"./scripts/db install ".$model."\n";
+} // }}}
+// create_controller($controller,$methods) {{{
+function create_controller($controller,$methods)
 {
+	$file = BASE_PATH.'app/controllers/'.$controller.'_controller.php';
+	$tpath = BASE_PATH.Config::$TEMPLATE_DIR.$controller.'/';
+	echo "will create app/controllers/".$controller."_controller.php\n";
+	if (is_file($file)) return "file already exists, not overwriting\n";
+	if (!is_dir(BASE_PATH.Config::$TEMPLATE_DIR.$controller)) {
+		@mkdir(BASE_PATH.Config::$TEMPLATE_DIR.$controller);
+		echo "created ".Config::$TEMPLATE_DIR.$controller."\n";
+	}
 
+	$content = "<?php if (!defined('BASE_PATH')) die('can access this file directly');\n".
+		"class $controller"."_controller extends tinly_controller {\n\n";
+	$content .= "	// __construct() {{{\n";
+	$content .= "	public function __construct()\n";
+	$content .= "	{\n";
+	$content .= "		parent::__construct();\n";
+	$content .= "	}// }}}\n";
+	// put index as first method
+	$methods = array_reverse($methods);
+	$methods[] = 'index';
+	$methods = array_reverse($methods);
 
-	mkdir "app/views/$1"
-	touch "app/views/$1/index.tpl.php"
-	echo "creating views/$1"
+	foreach($methods as $m) {
+		$content .= '	// '.$m."() {{{\n";
+		$content .= "	public function $m"."_()\n   {\n   ";
+		$content .= "	\$this->tpl->assign(array(\n";
+		$content .= "			'page_title' => 'the $m page',\n";
+		$content .= "			'_action' => '$m',\n";
+		$content .= "		));\n";
+		$content .= "	}// }}}\n";
 
+		if (!is_file($tpath.$m.".tpl.php")) {
+			file_put_contents($tpath.$m.'.tpl.php',
+				'<h2>I am '.$m.'</h2>'."\n");
+			echo "created ".Config::$TEMPLATE_DIR.$controller."/".$m.".tpl.php\n";
+		}
+	}
+	$content .= "\n}\n?>";
+	file_put_contents($file,$content);
+	return "controller ".$controller." generated, please change \$tbl to plural. and do ".
+		"./scripts/db install ".$model."\n";
+} // }}}
 
-	echo "creating app/controllers/$1_controller.php"
-	cat > "app/controllers/$1_controller.php"<<content_wraper
-<?php
-class $1_controller extends tinly_controller
-{
-	// index() {{{
-	public function index_()
-	{
-		\$this->tpl->assign(array(
-			'page_title' => 'the index page',
-			'_action' => 'index',
-		));
-	}// }}}
-content_wraper
-
-	echo "createing app/views/$1/index.tpl.php"
-	cat > "app/views/$1/index.tpl.php"<<content_wraper
-	<h1><?= \$page_title?></h1>
-content_wraper
-
-		for m in ${METHODS[*]}; do
-			action="$m"_
-			echo "createing app/views/$1/$m.tpl.php"
-			touch "app/views/$1/$m.tpl.php"
-			cat >> "app/controllers/$1_controller.php"<<content_wraper
-	// $m() {{{
-	public function $action()
-	{
-		\$this->tpl->assign(array(
-			'page_title' => 'the $m page',
-			'_action' => '$m',
-		));
-
-	} // }}}
-content_wraper
-		done;
-
-		cat >> "app/controllers/$1_controller.php"<<content_wraper
-}
+if ($type == 'controller') create_controller($class,$methods);
+else if ($type == 'model') create_model($class,$methods);
 ?>
-content_wraper
-}
-
-
-case $TYPE in
-	"model")
-	create_model "$NAME"
-	;;
-	"controller")
-	create_controller "$NAME" $METHODS
-	;;
-	*)
-	echo "usage: generate (model|controller) name_of"
-	;;
-esac

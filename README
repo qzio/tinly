@@ -1,15 +1,39 @@
 see lib/COPYRIGHT for copyright license.
 
-$ cp example.config.php config.php
+
+requirments (i think?) {TODO}
+	php >= 5.2
+	pdo + mysql driver (php5-mysql?)
+	curl with php bindings if you want to use lib/tcurl. (php5-curl)
+	php5-cli if you whish to use scripts/*
+
+
+Lets get started!
+
+	$ cp example.config.php config.php
 -- edit config.php with your settings.
-$ cp example.routes.php routes.php
+
+	$ cp example.routes.php routes.php
 -- edit default routes.
-$ ./script/generate controller mycontroller oneaction twoaction infiniteaction
-$ ./script generate model blog_post
 
--- edit app/model/blog_post.php and set $tbl to plural, add columns to $fields.
+To generate a controller skeleton
 
-$ ./script/db install blog_post
+	$ ./script/generate controller <controller> <action 1> <action 2> ...
 
-$ ./script/db empty all
+To generate a model skeleton
 
+	$ ./script generate model <model>
+-- edit app/model/blog_post.php and set $tbl to plural. 
+	You might want to some add columns to $fields.
+
+To install a model(table) [which extends tinly_model]
+	(this will do sql create table, or sql alter table adding columns)
+
+	$ ./script/db install <model>
+
+To drop all tables in configured database
+
+	$ ./script/db empty all
+
+
+If you need more scaffolding, build your own /scripts/my_generate

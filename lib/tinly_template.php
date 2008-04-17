@@ -4,17 +4,17 @@
 // +--------------------------------------------------------+   
 // | PHP Version 5.x                                        |
 // +--------------------------------------------------------+
-// | Filename: lib/hongine.php                              |
+// | Filename: lib/tinly_template.php                       |
 // +--------------------------------------------------------+
 // | Copyright (c) 2008 Joel Hansson                        |
 // +--------------------------------------------------------+
 // | License: MIT                                           |
 // +--------------------------------------------------------+
-// | Author:   Joel Hansson <joel.hansson@gmail.com>              |
+// | Author:   Joel Hansson <joel.hansson@gmail.com>        |
 // +--------------------------------------------------------+
 //
 // }}}
-class hongine {
+class tinly_template {
    protected $displayed;
    protected $tplDir;
    protected $template;

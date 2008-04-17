@@ -84,6 +84,7 @@ class core {
          $controller->setRequest($route->getRequest());
          $controller->$action();
       } else {
+         echo 'contorller: '.$controller_class.' action: '.$action.'<br/>';
          die("404 - dont know what you're looking for");
       }
    } // }}}
