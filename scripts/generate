@@ -64,7 +64,7 @@ function create_controller($controller,$methods)
 	}
 
 	$content = "<?php if (!defined('BASE_PATH')) die('can access this file directly');\n".
-		"class $controller"."_controller extends tinly_controller {\n\n";
+		"class $controller"."_controller extends appy_controller {\n\n";
 	$content .= "	// __construct() {{{\n";
 	$content .= "	public function __construct()\n";
 	$content .= "	{\n";

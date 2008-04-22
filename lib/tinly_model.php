@@ -10,11 +10,11 @@
 // +--------------------------------------------------------+
 // | License: MIT                                           |
 // +--------------------------------------------------------+
-// | Author:   Joel Hansson <joel.hansson@gmail.com>              |
+// | Author:   Joel Hansson <joel.hansson@gmail.com>        |
 // +--------------------------------------------------------+
 //
 //  }}}
-//
+
 class tinly_model {
    // properties {{{
    //public $quote_types = array('varchar', 'datetime','tinytext','text','longtext','tinyblob','blob','longblob');

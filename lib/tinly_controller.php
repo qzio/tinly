@@ -52,6 +52,10 @@ class tinly_controller {
       die('foo');
    }
    // }}}
+   // before_filter($method) {{{
+   protected function before_filter($method)
+   {
+   } // }}}
    //fallback {{{
    public function fallback() {
       echo "unable to handle the url";
@@ -75,6 +79,7 @@ class tinly_controller {
    {
       $method = $action.'_';
       if (method_exists($this,$method)) {
+         $this->before_filter($action);
          $this->$method();
          if (!$this->tpl->isDisplayed()) {
             $this->tpl->display($action,$this->my_name);
