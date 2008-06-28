@@ -162,7 +162,7 @@ class tinly_model {
          $sql = 'delete from '.$this->tbl.' where '.$this->pkey.' = ?';
          $stmt = $this->pdo->prepare($sql);
          $r = $stmt->execute(array($pvalue));
-         $this->pdo->qc++;
+         pdo_wrap::$qc++;
       } catch(PDOException $e) {
          $this->pdo->pcatch($e);
       }
@@ -218,7 +218,7 @@ class tinly_model {
          if ($r = $stmt->execute($values)) {
             $this->attr[$this->pkey] = $this->pdo->lastInsertId();
          }
-         $this->pdo->qc++;
+         pdo_wrap::$qc++;
 
       } catch(PDOException $e) {
          $this->pdo->pcatch($e);
@@ -238,12 +238,10 @@ class tinly_model {
             $sql .= ' where `'.$this->pkey.'` = :'.$this->pkey;
             $prepares['values'][':'.$this->pkey] = $this->attr[$this->pkey];
          } 
+         //echo 'will perform '.$sql.' with values <pre>'.print_r($prepares,true).'</pre>';
          $stmt = $this->pdo->prepare($sql);
-         foreach($prepares['values'] as $f => $v) {
-            $stmt->bindParam($f,$prepare['values'][$f]);
-         }
-         $r = $stmt->execute();
-         $this->pdo->qc++;
+         $r = $stmt->execute($prepares['values']);
+         pdo_wrap::$qc++;
 
       } catch(PDOException $e) {
          $this->pdo->pcatch($e);

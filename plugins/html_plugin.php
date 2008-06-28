@@ -75,6 +75,19 @@ class Html_Plugin {
       return '<style type="text/css"> @import \'/'.Config::$TEMPLATE_DIR.'_public/stylesheets/'.$style.'\';</style>'."\n";
    }
    // }}}
+   // img {{{
+   public function img($image,$params = array())
+   {
+      if (!empty($params['external_src'])) {
+         $src = ' src="'.$image.'" ';
+      } else {
+         $src = ' src="/'.Config::$TEMPLATE_DIR.'_public/images/'.$image.'" ';
+      }
+      $id = !empty($params['id']) ? ' id="'.$params['id'].'" ' : '';
+      $image_tag = '<img '.$src.' '.$id.' />';
+      return $image_tag;
+   }
+   // }}}
    // p {{{
    public static function p ($desc = '',$a = array(),$backtrace = false)
    {
