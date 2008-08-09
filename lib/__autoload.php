@@ -53,6 +53,7 @@ function class_suffix($classname)
    return $class_suffix;
 }
 
+$GLOBALS['vendor_files'] = array();
 // include the class file.
 function inc_class($class,$type = '')
 {
@@ -63,14 +64,14 @@ function inc_class($class,$type = '')
       } else if (file_exists('app/models/'.$class_file)) {
          $class_file = 'app/models/'.$class_file;
       } else if (is_dir(BASE_PATH.'vendors/')) {
-         $vhandle = opendir(BASE_PATH.'vendors/');
-         while(false !== ($ent = readdir($vhandle))) {
-            if (is_dir($ent)) {
-               $f = BASE_PATH.'vendors/'.$ent.'/'.$class_file;
-               if (file_exists($f) ) {
-                  $class_file = $f;
-               }
+         if( empty($GLOBALS['vendor_classes'] )) {
+            $files = glob(BASE_PATH.'vendors/*/*.php');
+            foreach($files as $fp) {
+               $GLOBALS['vendor_class_files'][basename($fp)] = $fp;
             }
+         } 
+         if ( array_key_exists($class_file, $GLOBALS['vendor_class_files']) ) {
+            $class_file = $GLOBALS['vendor_class_files'][$class_file];
          }
       }
 
