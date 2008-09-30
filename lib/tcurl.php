@@ -16,7 +16,7 @@
 //  }}}
 class tcurl {
 	// properties {{{
-	// base url to the server running bo, i.e http://tycoon.metaboli.net:3003
+	// base url to the service, i.e http://example.com:80
 	protected $base_url;
 	// the http user to use at login
 	protected $http_user;
