@@ -30,8 +30,6 @@ class tcurl {
 	protected $default_options;
 	// headers from response
 	protected $headers = array();
-	// /path/to/temp_file
-	protected $tmp_file;
 	// debug string
 	protected $debug = '';
 	// }}}
@@ -54,13 +52,6 @@ class tcurl {
 			CURLOPT_HEADER => 0,
 			CURLOPT_USERAGENT => 'tcurl',
 		);
-
-		// this file is used when writing xml file for PUT actions
-      if (function_exists('sys_get_temp_dir')) {
-		   $this->tmp_file = tempnam(sys_get_temp_dir(),'TcURL_stuff_');
-      } else {
-         $this->tmp_file = tempnam('/tmp','TcURL_stuff_');
-      }
 	}
 	// }}}
 	
@@ -205,9 +196,14 @@ class tcurl {
 	// putXML(resource_url,xml_string = '') {{{
 	public function putXML($resource_url,$xml_string = '')
 	{
-		file_put_contents($this->tmp_file,$xml_string);
-		$r = $this->put($resource_url,$this->tmp_file);
-		unlink($this->tmp_file);
+      if (function_exists('sys_get_temp_dir')) {
+         $tmp_file = tempnam(sys_get_temp_dir(), 'TcURL_');
+      }else {
+         $tmp_file = tempnam('/tmp', 'TcURL_');
+      }
+		file_put_contents($tmp_file,$xml_string);
+		$r = $this->put($resource_url,$mp_file);
+		unlink($tmp_file);
 		return $r;
 	}
 	// }}}
