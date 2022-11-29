@@ -6,7 +6,7 @@
 		<title>Demo | <?= empty($page_title) ? '' : $page_title?></title>
 
 		<?=$html->load_style('main.css')?>
-		<?=$html->load_script('jquery/jquery-1.2.3.js')?>
+		<?=$html->load_script('jquery/jquery-3.6.1.js')?>
 		<?=$html->load_script('init.js')?>
 
 	</head>
